@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,7 +10,6 @@ namespace TrisBenchmark
 
         public static int[] GenererTableau(int taille)
         {
-            Console.WriteLine("GÉNÉRATION D'UN TABLEAU");
             int[] t = new int[taille];
             for (int i = 0; i < t.Length; i++)
                 t[i] = rand.Next(int.MinValue, int.MaxValue);

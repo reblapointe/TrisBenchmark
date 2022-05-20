@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 
 namespace TrisBenchmark
@@ -20,13 +19,14 @@ namespace TrisBenchmark
             Stopwatch sw = new Stopwatch();
 
             Task<int[]> tacheTri = new Task<int[]>(() => tri(t));
-            Task tacheImpression = tacheTri.ContinueWith((t) =>
+            Task tacheImpression = tacheTri.ContinueWith(t =>
             {
                 lock (verrouPrint)
                 {
-                    Console.WriteLine($"{nom} terminé sur {t.Result.Length} entiers. [{t.Result[0]}, ..., {t.Result[t.Result.Length - 1]}] ({sw.ElapsedMilliseconds} ms)");
-                   // AlgosTableaux.ImprimerTableau(t.Result);
-                   // TODO impression secondes
+                    Console.WriteLine($"{nom,15} terminé sur {string.Format("{0:N0}",t.Result.Length)} entiers. " +
+                        $"[{string.Format("{0:N0}",t.Result[0])}, ..., {string.Format("{0:N0}", t.Result[^1])}] " +
+                        $"({ReduireMS(sw.ElapsedMilliseconds)})");
+                    // AlgosTableaux.ImprimerTableau(t.Result);
                 }
             });
 
@@ -39,9 +39,23 @@ namespace TrisBenchmark
             return tacheImpression;
         }
 
+        static string ReduireMS(long ms)
+        {
+            if (ms < 1000)
+                return ms + "ms";
+            double reste = ms / 1000.0;
+            if (reste < 60)
+                return string.Format("{0:0.#}", reste) + "s";
+            reste /= 60;
+            if (reste < 60)
+                return string.Format("{0:0.#}", reste) + "m";
+            reste /= 60;
+            return string.Format("{0:0.#}", reste) + "h";
+        }
+
         static void Main(string[] args)
         {
-            int[] t = AlgosTableaux.GenererTableau(30000);
+            int[] t = AlgosTableaux.GenererTableau(100_000);
 
             Task[] tasks = new Task[] {
                 DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
@@ -54,9 +68,9 @@ namespace TrisBenchmark
 
             Task.WaitAll(tasks);
             Console.WriteLine("Fin des tris. Début du Benchmark");
+            // BenchmarkRunner.Run<BenchmarkTris>();
 
             Console.ReadKey();
-            // BenchmarkRunner.Run<BenchmarkTris>();
         }
     }
 }
