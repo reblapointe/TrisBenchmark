@@ -14,7 +14,7 @@ namespace TrisBenchmark
             Console.WriteLine("GÉNÉRATION D'UN TABLEAU");
             int[] t = new int[taille];
             for (int i = 0; i < t.Length; i++)
-                t[i] = rand.Next(-100, 100);// int.MinValue, int.MaxValue);
+                t[i] = rand.Next(int.MinValue, int.MaxValue);
             return t;
         }
 
@@ -94,9 +94,9 @@ namespace TrisBenchmark
 
         private static T[] TriRapide<T>(T[] t, int gauche, int droite) where T : IComparable
         {
-            var i = gauche;
-            var j = droite;
-            var pivot = t[gauche];
+            int i = gauche;
+            int j = droite;
+            T pivot = t[gauche];
             while (i <= j)
             {
                 while (t[i].CompareTo(pivot) < 0)
@@ -122,21 +122,31 @@ namespace TrisBenchmark
 
         public static T[] TriFusion<T>(T[] t) where T : IComparable
         {
-            triFusion(CopierTableau(t), t, 0, t.Length);
+            TriFusion(CopierTableau(t), t, 0, t.Length);
             return t;
-            //return TriFusion(t, 0, t.Length - 1);
+        }
+
+        // debut inclusif, fin exclusif
+        static void TriFusion<T>(T[] entree, T[] sortie, int debut, int fin) where T : IComparable
+        {
+            if (fin - debut < 2)
+                return;
+            int milieu = (debut + fin) / 2;
+
+            TriFusion(sortie, entree, debut, milieu);
+            TriFusion(sortie, entree, milieu, fin);
+            Fusionner(entree, sortie, debut, milieu, fin);
         }
 
         // début inclusif
         // milieu à droite
         // fin exclufif
-        static void fusionner<T>(T[] entree, T[] sortie, int debut, int milieu, int fin) where T : IComparable
+        static void Fusionner<T>(T[] entree, T[] sortie, int debut, int milieu, int fin) where T : IComparable
         {
             int a = debut;
             int b = milieu;
             for (int i = debut; i < fin; i++)
             {
-               // Console.WriteLine($"a = {a}.   b = {b}.   i = {i}.   debut = {debut}.   milieu = {milieu}.   fin = {fin}");
                 if ((a < milieu) && ((b >= fin) || (entree[a].CompareTo(entree[b]) < 0)))
                 {
                     sortie[i] = entree[a];
@@ -149,54 +159,5 @@ namespace TrisBenchmark
                 }
             }
         }
-
-        // debut inclusif, fin exclusif
-        static void triFusion<T>(T[] entree, T[] sortie, int debut, int fin) where T : IComparable
-        {
-            if (fin - debut < 2)
-                return;
-            int milieu = (debut + fin) / 2;
-
-            triFusion(sortie, entree, debut, milieu);
-            triFusion(sortie, entree, milieu, fin);
-            fusionner(entree, sortie, debut, milieu, fin);
-        }
-
-        /*private static T[] TriFusion<T>(T[] t, int gauche, int droite) where T : IComparable
-        {
-            if (gauche < droite)
-            {
-                int milieu = gauche + (droite - gauche) / 2;
-                TriFusion(t, gauche, milieu);
-                TriFusion(t, milieu + 1, droite);
-                Fusionner(t, gauche, milieu, droite);
-            }
-            return t;
-        }
-
-        private static void Fusionner<T>(T[] t, int gauche, int milieu, int droite) where T : IComparable
-        {
-            var longueurGauche = milieu - gauche + 1;
-            var longueurDroite = droite - milieu;
-            var gaucheTemp = new T[longueurGauche];
-            var droiteTemp = new T[longueurDroite];
-            int i, j;
-            for (i = 0; i < longueurGauche; ++i)
-                gaucheTemp[i] = t[gauche + i];
-            for (j = 0; j < longueurDroite; ++j)
-                droiteTemp[j] = t[milieu + 1 + j];
-            i = 0;
-            j = 0;
-            int k = gauche;
-            while (i < longueurGauche && j < longueurDroite)
-                if (gaucheTemp[i].CompareTo(droiteTemp[j]) <= 0)
-                    t[k++] = gaucheTemp[i++];
-                else
-                    t[k++] = droiteTemp[j++];
-            while (i < longueurGauche)
-                t[k++] = gaucheTemp[i++];
-            while (j < longueurDroite)
-                t[k++] = droiteTemp[j++];
-        }*/
     }
 }

@@ -24,8 +24,9 @@ namespace TrisBenchmark
             {
                 lock (verrouPrint)
                 {
-                    Console.WriteLine($"{nom} terminé sur {t.Result.Length} entiers. ({sw.ElapsedMilliseconds} ms)");
-                    AlgosTableaux.ImprimerTableau(t.Result);
+                    Console.WriteLine($"{nom} terminé sur {t.Result.Length} entiers. [{t.Result[0]}, ..., {t.Result[t.Result.Length - 1]}] ({sw.ElapsedMilliseconds} ms)");
+                   // AlgosTableaux.ImprimerTableau(t.Result);
+                   // TODO impression secondes
                 }
             });
 
@@ -40,18 +41,7 @@ namespace TrisBenchmark
 
         static void Main(string[] args)
         {
-            int[] t = AlgosTableaux.GenererTableau(30);
-/* for (int i = 0; i < 100; i++)
-            {
-                t = AlgosTableaux.GenererTableau(30);
-                Console.WriteLine("FUSION");
-                var s = AlgosTableaux.TriFusion(AlgosTableaux.CopierTableau(t));
-                AlgosTableaux.ImprimerTableau(s);
-
-                Console.WriteLine("RAPIDE");
-                s = AlgosTableaux.TriRapide(AlgosTableaux.CopierTableau(t));
-                AlgosTableaux.ImprimerTableau(s);
-            }*/
+            int[] t = AlgosTableaux.GenererTableau(30000);
 
             Task[] tasks = new Task[] {
                 DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
