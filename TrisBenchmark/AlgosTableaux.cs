@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TrisBenchmark
 {
@@ -131,6 +132,10 @@ namespace TrisBenchmark
                 return;
             int milieu = (debut + fin) / 2;
 
+            /*var g = Task.Run(() => TriFusion(sortie, entree, debut, milieu));
+            var d = Task.Run(() => TriFusion(sortie, entree, milieu, fin));
+
+            Task.WaitAll(g, d);*/
             TriFusion(sortie, entree, debut, milieu);
             TriFusion(sortie, entree, milieu, fin);
             Fusionner(entree, sortie, debut, milieu, fin);
