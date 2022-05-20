@@ -94,41 +94,30 @@ namespace TrisBenchmark
 
         private static T[] TriRapide<T>(T[] t, int gauche, int droite) where T : IComparable
         {
-            if (gauche < droite)
+            var i = gauche;
+            var j = droite;
+            var pivot = t[gauche];
+            while (i <= j)
             {
-                int pivot = Partition(t, gauche, droite);
-                if (pivot > 1)
-                    TriRapide(t, gauche, pivot - 1);
-                if (pivot + 1 < droite)
-                    TriRapide(t, pivot + 1, droite);
+                while (t[i].CompareTo(pivot) < 0)
+                    i++;
+                while (t[j].CompareTo(pivot) > 0)
+                    j--;
+                if (i <= j)
+                {
+                    T temp = t[i];
+                    t[i] = t[j];
+                    t[j] = temp;
+                    i++;
+                    j--;
+                }
             }
+
+            if (gauche < j)
+                TriRapide(t, gauche, j);
+            if (i < droite)
+                TriRapide(t, i, droite);
             return t;
-        }
-
-        private static int Partition<T>(T[] t, int gauche, int droite) where T : IComparable
-        {
-            T pivot = t[gauche];
-            while (true)
-            {
-                while (t[gauche].CompareTo(pivot) < 0)
-                    gauche++;
-
-                while (t[droite].CompareTo(pivot) > 0)
-                    droite--;
-
-                if (gauche < droite)
-                {
-                    if (t[gauche].CompareTo(t[droite]) == 0)
-                        return droite;
-                    T temp = t[gauche];
-                    t[gauche] = t[droite];
-                    t[droite] = temp;
-                }
-                else
-                {
-                    return droite;
-                }
-            }
         }
 
         public static T[] TriFusion<T>(T[] t) where T : IComparable

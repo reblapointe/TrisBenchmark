@@ -8,6 +8,8 @@ namespace TrisBenchmark
 {
     class Program
     {
+        private static readonly object verrouPrint = new object();
+
         static Task DemarrerTri(int[] t, Func<int[], int[]> tri)
         {
             return DemarrerTri(t, tri, tri.Method.Name);
@@ -20,8 +22,11 @@ namespace TrisBenchmark
             Task<int[]> tacheTri = new Task<int[]>(() => tri(t));
             Task tacheImpression = tacheTri.ContinueWith((t) =>
             {
-                Console.WriteLine($"{nom} terminé sur {t.Result.Length} entiers. ({sw.ElapsedMilliseconds} ms)");
-                AlgosTableaux.ImprimerTableau(t.Result);
+                lock (verrouPrint)
+                {
+                    Console.WriteLine($"{nom} terminé sur {t.Result.Length} entiers. ({sw.ElapsedMilliseconds} ms)");
+                    AlgosTableaux.ImprimerTableau(t.Result);
+                }
             });
 
             // Permet d'afficher les exceptions s'il y a lieu
@@ -36,14 +41,24 @@ namespace TrisBenchmark
         static void Main(string[] args)
         {
             int[] t = AlgosTableaux.GenererTableau(30);
-// t = AlgosTableaux.TriFusion(AlgosTableaux.CopierTableau(t));
-  //          AlgosTableaux.ImprimerTableau(t);
+/* for (int i = 0; i < 100; i++)
+            {
+                t = AlgosTableaux.GenererTableau(30);
+                Console.WriteLine("FUSION");
+                var s = AlgosTableaux.TriFusion(AlgosTableaux.CopierTableau(t));
+                AlgosTableaux.ImprimerTableau(s);
+
+                Console.WriteLine("RAPIDE");
+                s = AlgosTableaux.TriRapide(AlgosTableaux.CopierTableau(t));
+                AlgosTableaux.ImprimerTableau(s);
+            }*/
+
             Task[] tasks = new Task[] {
-            //    DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
-            //    DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriInsertion),
-            //    DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriSelection),
-            //    DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriABulle),
-            //    DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide),
+                DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
+                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriInsertion),
+                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriSelection),
+                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriABulle),
+                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriFusion),
             };
 
