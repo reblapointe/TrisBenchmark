@@ -24,7 +24,7 @@ namespace TrisBenchmark
                 lock (verrouPrint)
                 {
                     Console.WriteLine($"{nom,15} terminé sur {string.Format("{0:N0}",t.Result.Length)} entiers. " +
-                        $"[{string.Format("{0:N0}",t.Result[0])}, ..., {string.Format("{0:N0}", t.Result[^1])}] " +
+                        $"[{string.Format("{0:N0}",t.Result[0])}, ... , {string.Format("{0:N0}", t.Result[^1])}] " +
                         $"({ReduireMS(sw.ElapsedMilliseconds)})");
                     // AlgosTableaux.ImprimerTableau(t.Result);
                 }
@@ -53,22 +53,26 @@ namespace TrisBenchmark
             return string.Format("{0:0.#}", reste) + "h";
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            int[] t = AlgosTableaux.GenererTableau(100_000);
+            int[] t = AlgosTableaux.GenererTableau(1_000_000);
 
-            Task[] tasks = new Task[] {
-                DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
-                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriInsertion),
-                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriSelection),
-                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriABulle),
-                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide),
-                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriFusion),
-            };
+            // Array.Sort() : This method uses the introspective sort (introsort) algorithm as follows:
+            //    If the partition size is less than or equal to 16 elements, it uses an insertion sort algorithm.
+            //    If the number of partitions exceeds 2 * LogN, where N is the range of the input array, it uses a Heapsort algorithm.
+            //    Otherwise, it uses a Quicksort algorithm.
+            // https://docs.microsoft.com/en-us/dotnet/api/system.array.sort?redirectedfrom=MSDN&view=net-6.0#System_Array_Sort_System_Array_
 
-            Task.WaitAll(tasks);
-            Console.WriteLine("Fin des tris. Début du Benchmark");
-            // BenchmarkRunner.Run<BenchmarkTris>();
+            
+            await DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort");
+            await DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriTas);
+            await DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide);
+            await DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriFusion);
+            
+            Console.WriteLine("Fin des tris.");
+            
+            Console.WriteLine("Début du Benchmark");
+            BenchmarkRunner.Run<BenchmarkTris>();
 
             Console.ReadKey();
         }

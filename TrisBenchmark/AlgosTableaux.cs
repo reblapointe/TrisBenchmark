@@ -9,6 +9,9 @@ namespace TrisBenchmark
     {
         private static readonly Random rand = new Random();
 
+        private const int NB_COEURS = 6;
+        private static int nbThreads = 0; 
+
         public static int[] GenererTableau(int taille)
         {
             int[] t = new int[taille];
@@ -112,10 +115,28 @@ namespace TrisBenchmark
                 }
             }
 
-            if (gauche < j)
-                TriRapide(t, gauche, j);
-            if (i < droite)
-                TriRapide(t, i, droite);
+            if (nbThreads < NB_COEURS - 2)
+            {
+                nbThreads += 2;
+                Task<T[]> g = null, d = null;
+
+                if (gauche < j)
+                    g = Task.Run(() => TriRapide(t, gauche, j));
+                if (i < droite)
+                    d = Task.Run(() => TriRapide(t, i, droite));
+                if (g != null)
+                    Task.WaitAll(g);
+                if (d != null)
+                    Task.WaitAll(d);
+                nbThreads -= 2;
+            }
+            else
+            {
+                if (gauche < j)
+                    TriRapide(t, gauche, j);
+                if (i < droite)
+                    TriRapide(t, i, droite);
+            }
             return t;
         }
 
@@ -126,18 +147,26 @@ namespace TrisBenchmark
         }
 
         // debut inclusif, fin exclusif
-        static void TriFusion<T>(T[] entree, T[] sortie, int debut, int fin) where T : IComparable
+        private static void TriFusion<T>(T[] entree, T[] sortie, int debut, int fin) where T : IComparable
         {
             if (fin - debut < 2)
                 return;
             int milieu = (debut + fin) / 2;
 
-            /*var g = Task.Run(() => TriFusion(sortie, entree, debut, milieu));
-            var d = Task.Run(() => TriFusion(sortie, entree, milieu, fin));
+            if (nbThreads < NB_COEURS - 2)
+            {
+                nbThreads += 2;
+                var g = Task.Run(() => TriFusion(sortie, entree, debut, milieu));
+                var d = Task.Run(() => TriFusion(sortie, entree, milieu, fin));
 
-            Task.WaitAll(g, d);*/
-            TriFusion(sortie, entree, debut, milieu);
-            TriFusion(sortie, entree, milieu, fin);
+                Task.WaitAll(g, d);
+                nbThreads -= 2;
+            }
+            else
+            {
+                TriFusion(sortie, entree, debut, milieu);
+                TriFusion(sortie, entree, milieu, fin);
+            }
             Fusionner(entree, sortie, debut, milieu, fin);
         }
 
@@ -160,6 +189,43 @@ namespace TrisBenchmark
                     sortie[i] = entree[b];
                     b++;
                 }
+            }
+        }
+
+        public static T[] TriTas<T>(T[] t) where T : IComparable 
+        {
+            return TriTas(t, t.Length);
+        }
+
+        static T[] TriTas<T>(T[] t, int n) where T : IComparable 
+        {
+            for (int i = n / 2 - 1; i >= 0; i--)
+                Tamiser(t, n, i);
+            for (int i = n-1; i >= 0; i--) 
+            {
+                T temp = t[0];
+                t[0] = t[i];
+                t[i] = temp;
+                Tamiser(t, i, 0);
+            }
+            return t;
+        }
+
+        private static void Tamiser<T>(T[] t, int n, int i) where T : IComparable
+        {
+            int maximum = i;
+            int gauche = 2 * i + 1;
+            int droite = 2 * i + 2;
+            if (gauche < n && t[gauche].CompareTo(t[maximum]) > 0)
+                maximum = gauche;
+            if (droite < n && t[droite].CompareTo(t[maximum]) > 0)
+                maximum = droite;
+            if (maximum != i) 
+            {
+                T temp = t[i];
+                t[i] = t[maximum];
+                t[maximum] = temp;
+                Tamiser(t, n, maximum);
             }
         }
     }
