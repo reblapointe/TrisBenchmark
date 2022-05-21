@@ -64,10 +64,12 @@ namespace TrisBenchmark
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriABulle),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriFusion),
+                DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriTas),
             };
 
             Task.WaitAll(tasks);
-            Console.WriteLine("Fin des tris. Début du Benchmark");
+            Console.WriteLine("Fin des tris");
+            // Console.WriteLine("Début du Benchmark");
             // BenchmarkRunner.Run<BenchmarkTris>();
 
             Console.ReadKey();

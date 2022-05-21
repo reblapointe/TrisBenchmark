@@ -162,5 +162,43 @@ namespace TrisBenchmark
                 }
             }
         }
+
+
+        public static T[] TriTas<T>(T[] t) where T : IComparable 
+        {
+            return TriTas(t, t.Length);
+        }
+
+        static T[] TriTas<T>(T[] t, int n) where T : IComparable 
+        {
+            for (int i = n / 2 - 1; i >= 0; i--)
+                Tamiser(t, n, i);
+            for (int i = n-1; i >= 0; i--) 
+            {
+                T temp = t[0];
+                t[0] = t[i];
+                t[i] = temp;
+                Tamiser(t, i, 0);
+            }
+            return t;
+        }
+
+        private static void Tamiser<T>(T[] t, int n, int i) where T : IComparable
+        {
+            int maximum = i;
+            int gauche = 2 * i + 1;
+            int droite = 2 * i + 2;
+            if (gauche < n && t[gauche].CompareTo(t[maximum]) > 0)
+                maximum = gauche;
+            if (droite < n && t[droite].CompareTo(t[maximum]) > 0)
+                maximum = droite;
+            if (maximum != i) 
+            {
+                T temp = t[i];
+                t[i] = t[maximum];
+                t[maximum] = temp;
+                Tamiser(t, n, maximum);
+            }
+        }
     }
 }
