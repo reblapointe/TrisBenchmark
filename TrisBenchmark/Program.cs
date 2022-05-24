@@ -39,18 +39,13 @@ namespace TrisBenchmark
             return tacheImpression;
         }
 
-        static string ReduireMS(long ms)
+        static string ReduireMS(long t)
         {
-            if (ms < 1000)
-                return ms + "ms";
-            double reste = ms / 1000.0;
-            if (reste < 60)
-                return string.Format("{0:0.#}", reste) + "s";
-            reste /= 60;
-            if (reste < 60)
-                return string.Format("{0:0.#}", reste) + "m";
-            reste /= 60;
-            return string.Format("{0:0.#}", reste) + "h";
+            long ms = t % 1000;
+            long s = (t / 1000) % 60;
+            long m = (t / (60 * 1000)) % 60;
+            long h = t / (1000 * 60 * 60);
+            return h.ToString("00") + ":" + m.ToString("00") + ":" + s.ToString("00") + "." + ms.ToString("000") + "";
         }
 
         static void Main(string[] args)
