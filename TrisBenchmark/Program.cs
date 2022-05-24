@@ -43,7 +43,7 @@ namespace TrisBenchmark
         {
             long ms = t % 1000;
             long s = t / 1000 % 60;
-            long m = t / (60 * 1000) % 60;
+            long m = t / (1000 * 60) % 60;
             long h = t / (1000 * 60 * 60);
             return $"{h:00}:{m:00}:{s:00}.{ms:000}"; // hh:mm:ss.fff
         }
@@ -63,7 +63,7 @@ namespace TrisBenchmark
             };
 
             Task.WaitAll(tasks);
-            Console.WriteLine("Fin des tris.");
+            Console.WriteLine("\nFin des tris.");
 
             // Console.WriteLine("Début du Benchmark");
             // BenchmarkRunner.Run<BenchmarkTris>();
