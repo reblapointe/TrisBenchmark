@@ -41,12 +41,11 @@ namespace TrisBenchmark
 
         static string ReduireMS(long t)
         {
-            // hh:mm:ss.fff
             long ms = t % 1000;
-            long s = (t / 1000) % 60;
-            long m = (t / (60 * 1000)) % 60;
+            long s = t / 1000 % 60;
+            long m = t / (60 * 1000) % 60;
             long h = t / (1000 * 60 * 60);
-            return $"{h:00}:{m:00}:{s:00}.{ms:000}";
+            return $"{h:00}:{m:00}:{s:00}.{ms:000}"; // hh:mm:ss.fff
         }
 
         static void Main(string[] args)
