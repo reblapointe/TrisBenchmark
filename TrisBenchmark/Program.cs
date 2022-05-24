@@ -41,17 +41,19 @@ namespace TrisBenchmark
 
         static string ReduireMS(long t)
         {
+            // hh:mm:ss.fff
             long ms = t % 1000;
             long s = (t / 1000) % 60;
             long m = (t / (60 * 1000)) % 60;
             long h = t / (1000 * 60 * 60);
-            return h.ToString("00") + ":" + m.ToString("00") + ":" + s.ToString("00") + "." + ms.ToString("000") + "";
+            return $"{h:00}:{m:00}:{s:00}.{ms:000}";
         }
 
         static void Main(string[] args)
         {
             int[] t = AlgosTableaux.GenererTableau(100_000);
 
+            Console.WriteLine("Début des tris.\nTemps d'exécution en format hh:mm:ss.fff\n\n");
             Task[] tasks = new Task[] {
                 DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriInsertion),
@@ -62,7 +64,9 @@ namespace TrisBenchmark
             };
 
             Task.WaitAll(tasks);
-            Console.WriteLine("Fin des tris. Début du Benchmark");
+            Console.WriteLine("Fin des tris.");
+
+            // Console.WriteLine("Début du Benchmark");
             // BenchmarkRunner.Run<BenchmarkTris>();
 
             Console.ReadKey();
