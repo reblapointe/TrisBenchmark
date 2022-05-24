@@ -28,6 +28,9 @@ namespace TrisBenchmark
         [Benchmark]
         public void TriFusion() => BenchMarkTri(AlgosTableaux.TriFusion);
 
+        [Benchmark]
+        public void TriTas() => BenchMarkTri(AlgosTableaux.TriTas);
+
         [Benchmark(Baseline = true)]
         public void ArraySort() => BenchMarkTri(s => { Array.Sort(s); return s; });
 
