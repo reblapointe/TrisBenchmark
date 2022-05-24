@@ -64,7 +64,8 @@ namespace TrisBenchmark
             };
 
             Task.WaitAll(tasks);
-            Console.WriteLine("Fin des tris. Début du Benchmark");
+            Console.WriteLine("\nFin des tris.");
+            // Console.WriteLine("Début du Benchmark");
             // BenchmarkRunner.Run<BenchmarkTris>();
 
             Console.ReadKey();
