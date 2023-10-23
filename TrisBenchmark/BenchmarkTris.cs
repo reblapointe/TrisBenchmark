@@ -7,11 +7,9 @@ namespace TrisBenchmark
 {
     public class BenchmarkTris
     {
-
         public const int TAILLE = 3_000;
 
         public static int[] Tableau { get; set; }
-
 
         [Benchmark]
         public void TriABulle() => BenchMarkTri(AlgosTableaux.TriABulle);
@@ -36,8 +34,7 @@ namespace TrisBenchmark
 
         private void BenchMarkTri(Func<int[], int[]> tri)
         {
-            if (Tableau == null)
-                Tableau = AlgosTableaux.GenererTableau(TAILLE);
+            Tableau ??= AlgosTableaux.GenererTableau(TAILLE);
 
             tri.Invoke(AlgosTableaux.CopierTableau(Tableau));
         }

@@ -7,18 +7,31 @@ namespace TrisBenchmark
 {
     class Program
     {
-        private static readonly object verrouPrint = new object();
+        private static readonly object verrouPrint = new ();
 
+        /// <summary>
+        /// Démarre un tri sur un tableau
+        /// </summary>
+        /// <param name="t">tableau</param>
+        /// <param name="tri">algorithme de tri</param>
+        /// <returns>Tâche de tri</returns>
         static Task DemarrerTri(int[] t, Func<int[], int[]> tri)
         {
             return DemarrerTri(t, tri, tri.Method.Name);
         }
 
+        /// <summary>
+        /// Démarre un tri sur un tableau et affiche le temps écoulé à la fin du tri
+        /// </summary>
+        /// <param name="t">tableau</param>
+        /// <param name="tri">algorithme de tri</param>
+        /// <param name="nom">Nom de l'algorithme de tri</param>
+        /// <returns>Tâche de tri</returns>
         static Task DemarrerTri(int[] t, Func<int[], int[]> tri, string nom)
         {
-            Stopwatch sw = new Stopwatch();
+            Stopwatch sw = new();
 
-            Task<int[]> tacheTri = new Task<int[]>(() => tri(t));
+            Task<int[]> tacheTri = new(() => tri(t));
             Task tacheImpression = tacheTri.ContinueWith(t =>
             {
                 lock (verrouPrint)
@@ -39,6 +52,11 @@ namespace TrisBenchmark
             return tacheImpression;
         }
 
+        /// <summary>
+        /// Formatte le nombre de millisecondes
+        /// </summary>
+        /// <param name="t">temps en millisecondes</param>
+        /// <returns>Une chaine de forme hh:mm:ss.fff</returns>
         static string ReduireMS(long t)
         {
             long ms = t % 1000;
@@ -48,11 +66,14 @@ namespace TrisBenchmark
             return $"{h:00}:{m:00}:{s:00}.{ms:000}"; // hh:mm:ss.fff
         }
 
-        static void Main(string[] args)
+        /// <summary>
+        /// Démarre les tris sur un tableau de 100_000 entiers
+        /// </summary>
+        static void Main(string[] _)
         {
             int[] t = AlgosTableaux.GenererTableau(100_000);
 
-            /*Console.WriteLine("Début des tris.\nTemps d'exécution en format hh:mm:ss.fff\n\n");
+            Console.WriteLine("Début des tris.\nTemps d'exécution en format hh:mm:ss.fff\n\n");
             Task[] tasks = new Task[] {
                 DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriInsertion),
@@ -61,9 +82,9 @@ namespace TrisBenchmark
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriFusion),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriTas),
-            };*/
+            };
 
-           // Task.WaitAll(tasks);
+            Task.WaitAll(tasks);
             Console.WriteLine("\nFin des tris.");
             Console.WriteLine("Début du Benchmark");
             BenchmarkRunner.Run<BenchmarkTris>();
