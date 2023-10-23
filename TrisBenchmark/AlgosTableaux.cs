@@ -143,14 +143,15 @@ namespace TrisBenchmark
 
         // début inclusif
         // milieu à droite
-        // fin exclufif
+        // fin exclusif
+        // stable
         static void Fusionner<T>(T[] entree, T[] sortie, int debut, int milieu, int fin) where T : IComparable
         {
             int a = debut;
             int b = milieu;
             for (int i = debut; i < fin; i++)
             {
-                if ((a < milieu) && ((b >= fin) || (entree[a].CompareTo(entree[b]) < 0)))
+                if ((a < milieu) && ((b >= fin) || (entree[a].CompareTo(entree[b]) <= 0)))
                 {
                     sortie[i] = entree[a];
                     a++;

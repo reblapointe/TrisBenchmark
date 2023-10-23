@@ -8,7 +8,7 @@ namespace TrisBenchmark
     public class BenchmarkTris
     {
 
-        public const int TAILLE = 300_000;
+        public const int TAILLE = 3_000;
 
         public static int[] Tableau { get; set; }
 

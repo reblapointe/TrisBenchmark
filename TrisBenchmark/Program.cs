@@ -52,7 +52,7 @@ namespace TrisBenchmark
         {
             int[] t = AlgosTableaux.GenererTableau(100_000);
 
-            Console.WriteLine("Début des tris.\nTemps d'exécution en format hh:mm:ss.fff\n\n");
+            /*Console.WriteLine("Début des tris.\nTemps d'exécution en format hh:mm:ss.fff\n\n");
             Task[] tasks = new Task[] {
                 DemarrerTri(AlgosTableaux.CopierTableau(t), s => {Array.Sort(s); return s;}, "Array.Sort"),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriInsertion),
@@ -61,12 +61,12 @@ namespace TrisBenchmark
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriRapide),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriFusion),
                 DemarrerTri(AlgosTableaux.CopierTableau(t), AlgosTableaux.TriTas),
-            };
+            };*/
 
-            Task.WaitAll(tasks);
+           // Task.WaitAll(tasks);
             Console.WriteLine("\nFin des tris.");
-            // Console.WriteLine("Début du Benchmark");
-            // BenchmarkRunner.Run<BenchmarkTris>();
+            Console.WriteLine("Début du Benchmark");
+            BenchmarkRunner.Run<BenchmarkTris>();
 
             Console.ReadKey();
         }
